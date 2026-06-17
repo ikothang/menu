@@ -12,73 +12,73 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- Firebase SDKs (Compatibility versions for standard global 'firebase' object) -->
+    
+    <!-- Firebase SDKs (Compatibility versions for standard global 'firebase' object) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-<style>
+    <style>
         /* Custom Premium Fonts & Theme Styling */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #fcfbf7;
             color: #2c2520;
         }
-
-.font-serif-elegant {
+        
+        .font-serif-elegant {
             font-family: 'Playfair Display', serif;
         }
-
-.font-classic {
+        
+        .font-classic {
             font-family: 'Cinzel', serif;
         }
 
-/* Royal Batik Classic Theme Colors: 
+        /* Royal Batik Classic Theme Colors: 
            Deep Indigo/Blue-Grey: #1a2e40
            Rich Gold: #c5a850 
            Warm Bronze/Brown: #5c4033
            Cream/Soft White: #fcfbf7
         */
 
-/* Traditional Batik Pattern Overlay Background */
+        /* Traditional Batik Pattern Overlay Background */
         .batik-bg {
             background-color: #111e29;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0l40 40-40 40L0 40z' fill='%23c5a850' fill-opacity='0.08'/%3E%3Cpath d='M40 10l30 30-30 30-30-30z' fill='%231a2e40' fill-opacity='0.2'/%3E%3Ccircle cx='40' cy='40' r='5' fill='%23c5a850' fill-opacity='0.3'/%3E%3C/svg%3E");
         }
 
-.batik-light {
+        .batik-light {
             background-color: #fbf9f3;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23c5a850' fill-opacity='0.04'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%23c5a850' fill-opacity='0.15'/%3E%3C/svg%3E");
         }
 
-/* Gold Gradient Borders */
+        /* Gold Gradient Borders */
         .border-gold-gradient {
             border-image: linear-gradient(to right, #c5a850, #ecdca5, #c5a850) 1;
         }
 
-.text-gold {
+        .text-gold {
             color: #bfa34a;
         }
-
-.bg-gold {
+        
+        .bg-gold {
             background-color: #bfa34a;
         }
-
-.bg-gold-hover:hover {
+        
+        .bg-gold-hover:hover {
             background-color: #a38735;
         }
 
-.bg-navy {
+        .bg-navy {
             background-color: #111e29;
         }
 
-/* Smooth page transition animations */
+        /* Smooth page transition animations */
         .page-transition {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-/* Custom Scrollbar for premium feel */
+        /* Custom Scrollbar for premium feel */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -90,7 +90,7 @@
             border-radius: 10px;
         }
 
-/* Pulsing Glow for interactive elements */
+        /* Pulsing Glow for interactive elements */
         .glow-button {
             box-shadow: 0 4px 20px rgba(197, 168, 80, 0.25);
             transition: all 0.3s ease;
@@ -100,7 +100,7 @@
             transform: translateY(-2px);
         }
 
-/* Banner Batik Border styling */
+        /* Banner Batik Border styling */
         .batik-border-top {
             background-image: radial-gradient(circle at 50% 120%, #c5a850 3px, transparent 4px),
                               radial-gradient(circle at 50% 140%, #111e29 6px, transparent 7px);
@@ -111,7 +111,7 @@
 </head>
 <body class="batik-light min-h-screen flex flex-col justify-between overflow-x-hidden">
 
-<!-- OVERLAY LOADING SPINNER -->
+    <!-- OVERLAY LOADING SPINNER -->
     <div id="loadingOverlay" class="fixed inset-0 bg-[#111e29] z-50 flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="relative w-24 h-24 mb-4">
             <!-- Rotating Traditional Floral/Batik Mandala Style Loader -->
@@ -124,10 +124,10 @@
         <p class="text-xs text-gray-400 mt-2">"Air tangan ibu sentiasa terbaik"</p>
     </div>
 
-<!-- MAIN APP WRAPPER -->
+    <!-- MAIN APP WRAPPER -->
     <main class="flex-grow flex flex-col">
-
-<!-- ----------------------------------------- -->
+        
+        <!-- ----------------------------------------- -->
         <!-- 1. WELCOME PAGE                           -->
         <!-- ----------------------------------------- -->
         <section id="welcomePage" class="page-transition flex-grow flex flex-col justify-between batik-bg text-white relative py-8 px-4">
@@ -137,7 +137,7 @@
             <div class="absolute bottom-0 left-0 w-24 h-24 border-b-2 border-l-2 border-[#c5a850] opacity-60 m-4"></div>
             <div class="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-[#c5a850] opacity-60 m-4"></div>
 
-<!-- Brand Header -->
+            <!-- Brand Header -->
             <div class="text-center mt-12 z-10">
                 <span class="text-xs uppercase tracking-[0.3em] text-[#c5a850] font-medium block mb-2">Selamat Datang Ke</span>
                 <h1 class="text-5xl font-classic font-bold tracking-wide text-white drop-shadow-md">WARUNG IBU</h1>
@@ -145,7 +145,7 @@
                 <p class="font-serif-elegant italic text-base text-[#e5d4a3] tracking-wide">"Air tangan ibu sentiasa terbaik"</p>
             </div>
 
-<!-- Central Call To Action Block -->
+            <!-- Central Call To Action Block -->
             <div class="max-w-md w-full mx-auto my-auto p-6 bg-[#1a2e40]/90 rounded-2xl border border-[#c5a850]/40 backdrop-blur-sm shadow-2xl z-10">
                 <div class="text-center mb-6">
                     <span class="inline-block p-3 rounded-full bg-[#c5a850]/15 text-[#c5a850] mb-3">
@@ -155,7 +155,7 @@
                     <p class="text-xs text-gray-300 mt-1">Sila isi nombor meja anda untuk memulakan pesanan terus ke dapur.</p>
                 </div>
 
-<!-- Interactive Form -->
+                <!-- Interactive Form -->
                 <div class="space-y-4">
                     <div>
                         <label for="tableNumber" class="block text-xs font-semibold uppercase tracking-wider text-[#c5a850] mb-2">Nombor Meja Anda <span class="text-red-400">*</span></label>
@@ -169,35 +169,35 @@
                         </div>
                     </div>
 
-<!-- Client Error Message (Custom Modal-style Alert inline) -->
+                    <!-- Client Error Message (Custom Modal-style Alert inline) -->
                     <div id="tableError" class="hidden text-center text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2 rounded-lg">
                         <i class="fa-solid fa-circle-exclamation mr-1"></i> Sila masukkan nombor meja yang sah sebelum meneruskan.
                     </div>
 
-<button onclick="proceedToMenu()" class="w-full py-4 bg-[#c5a850] text-[#111e29] font-bold uppercase tracking-wider rounded-xl glow-button font-classic transition-all hover:bg-[#e6d59b] flex items-center justify-center gap-2 text-sm mt-2">
+                    <button onclick="proceedToMenu()" class="w-full py-4 bg-[#c5a850] text-[#111e29] font-bold uppercase tracking-wider rounded-xl glow-button font-classic transition-all hover:bg-[#e6d59b] flex items-center justify-center gap-2 text-sm mt-2">
                         <span>Lihat Menu Tradisi</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
 
-<!-- Footer Traditional Pattern Statement -->
+            <!-- Footer Traditional Pattern Statement -->
             <div class="text-center text-[10px] text-gray-400 tracking-widest uppercase z-10 mb-2">
-                Warisan Masakan Melayu Nusantara • Sejak 1982
+                Warisan Masakan Melayu Nusantara &bull; Sejak 1982
             </div>
         </section>
 
-<!-- ----------------------------------------- -->
+        <!-- ----------------------------------------- -->
         <!-- 2. MENU PAGE (MAIN APP CONTENT)           -->
         <!-- ----------------------------------------- -->
         <section id="menuPage" class="page-transition hidden flex-grow flex flex-col">
-
-<!-- Sticky Elegant Header -->
+            
+            <!-- Sticky Elegant Header -->
             <header class="bg-navy text-white shadow-xl sticky top-0 z-30">
                 <!-- Golden Batik Strip Decorator -->
                 <div class="h-1 bg-gradient-to-r from-[#c5a850] via-[#ffd700] to-[#c5a850]"></div>
-
-<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+                
+                <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs bg-[#c5a850]/20 text-[#c5a850] px-2.5 py-0.5 rounded-full font-bold border border-[#c5a850]/30 font-classic">
@@ -207,14 +207,14 @@
                         <h2 class="text-xl font-classic font-bold tracking-wider text-white">WARUNG IBU</h2>
                     </div>
 
-<div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <!-- Toggle Cart Button with badge -->
                         <button onclick="toggleCart()" class="relative p-2.5 bg-[#c5a850]/15 text-[#c5a850] rounded-xl hover:bg-[#c5a850]/30 transition-all border border-[#c5a850]/30">
                             <i class="fa-solid fa-receipt text-lg"></i>
                             <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-[#111e29] hidden">0</span>
                         </button>
-
-<!-- Leave/Table Change button -->
+                        
+                        <!-- Leave/Table Change button -->
                         <button onclick="goBackToWelcome()" class="text-xs text-gray-300 hover:text-white flex items-center gap-1 bg-[#1a2e40] px-3 py-2 rounded-xl border border-gray-700">
                             <i class="fa-solid fa-sign-out-alt"></i> <span class="hidden sm:inline">Tukar Meja</span>
                         </button>
@@ -222,7 +222,7 @@
                 </div>
             </header>
 
-<!-- Marketing Hook Hero Banner (Crafted to Convert Sales) -->
+            <!-- Marketing Hook Hero Banner (Crafted to Convert Sales) -->
             <div class="bg-[#1a2e40] text-white py-6 px-4 text-center relative overflow-hidden shadow-inner border-b border-[#c5a850]/30">
                 <div class="absolute inset-0 opacity-10 batik-bg"></div>
                 <div class="relative z-10 max-w-2xl mx-auto">
@@ -234,7 +234,7 @@
                 </div>
             </div>
 
-<!-- Menu Navigation & Categories (Sticky Sub-bar) -->
+            <!-- Menu Navigation & Categories (Sticky Sub-bar) -->
             <div class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-[65px] z-20 py-3 shadow-sm">
                 <div class="max-w-6xl mx-auto px-4 flex justify-between items-center gap-2">
                     <!-- Elegant Custom Category Tabs -->
@@ -249,8 +249,8 @@
                             <i class="fa-solid fa-mug-hot mr-1"></i> Minuman
                         </button>
                     </div>
-
-<!-- Quick Search Bar -->
+                    
+                    <!-- Quick Search Bar -->
                     <div class="relative hidden sm:block">
                         <input type="text" id="searchInput" onkeyup="filterMenu()" placeholder="Cari sajian idaman..." 
                             class="pl-8 pr-4 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c5a850] w-48">
@@ -259,7 +259,7 @@
                 </div>
             </div>
 
-<!-- Dynamic Search Bar for Mobile Only -->
+            <!-- Dynamic Search Bar for Mobile Only -->
             <div class="px-4 pt-3 pb-1 sm:hidden">
                 <div class="relative w-full">
                     <input type="text" id="searchInputMobile" onkeyup="filterMenuMobile()" placeholder="Cari sajian idaman..." 
@@ -268,14 +268,14 @@
                 </div>
             </div>
 
-<!-- MENU ITEMS CONTAINER -->
+            <!-- MENU ITEMS CONTAINER -->
             <div class="max-w-6xl mx-auto px-4 py-6 flex-grow">
                 <!-- GRID SYSTEM -->
                 <div id="menuItemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- JS will render menu items dynamically here with high quality CSS structure -->
                 </div>
-
-<!-- No item state -->
+                
+                <!-- No item state -->
                 <div id="noResults" class="hidden text-center py-16">
                     <div class="text-[#c5a850] text-5xl mb-4"><i class="fa-regular fa-face-frown"></i></div>
                     <h4 class="text-lg font-serif-elegant font-bold text-gray-800">Sajian Tidak Dijumpai</h4>
@@ -283,7 +283,7 @@
                 </div>
             </div>
 
-<!-- FLOAT BUTTON CART FOR MOBILE -->
+            <!-- FLOAT BUTTON CART FOR MOBILE -->
             <div class="sticky bottom-4 right-4 self-end z-30 mr-4 mb-4 lg:hidden">
                 <button onclick="toggleCart()" class="bg-[#c5a850] text-[#111e29] hover:bg-[#e6d59b] font-bold p-4 rounded-full shadow-2xl flex items-center justify-center gap-2 glow-button border border-white/20">
                     <i class="fa-solid fa-shopping-basket text-xl"></i>
@@ -291,11 +291,11 @@
                     <span id="floatCartBadge" class="bg-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-[#111e29] hidden">0</span>
                 </button>
             </div>
-
-<!-- BACKDROP OVERLAY FOR CART SLIDEOUT -->
+            
+            <!-- BACKDROP OVERLAY FOR CART SLIDEOUT -->
             <div id="cartBackdrop" onclick="toggleCart()" class="fixed inset-0 bg-black/60 z-40 hidden transition-opacity duration-300"></div>
 
-<!-- SLIDEOUT CART DRAWER -->
+            <!-- SLIDEOUT CART DRAWER -->
             <div id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between border-l border-gray-200">
                 <!-- Drawer Header -->
                 <div class="p-4 bg-navy text-white flex justify-between items-center border-b border-[#c5a850]/30">
@@ -311,12 +311,12 @@
                     </button>
                 </div>
 
-<!-- Drawer Content -->
+                <!-- Drawer Content -->
                 <div class="flex-grow overflow-y-auto p-4 space-y-4" id="cartContent">
                     <!-- Dynamic Cart Items Rendered Here -->
                 </div>
 
-<!-- Drawer Footer (Order Summary and Send Order Action) -->
+                <!-- Drawer Footer (Order Summary and Send Order Action) -->
                 <div class="p-4 bg-gray-50 border-t border-gray-200 space-y-3">
                     <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
                         <span>Jumlah Sajian</span>
@@ -327,12 +327,12 @@
                         <span id="summaryTotal" class="text-2xl font-serif-elegant font-bold text-emerald-700">RM 0.00</span>
                     </div>
 
-<!-- Custom Table Number Validator Alert for inside Cart -->
+                    <!-- Custom Table Number Validator Alert for inside Cart -->
                     <div id="cartValidationNotice" class="hidden text-center text-xs text-amber-700 bg-amber-50 border border-amber-200 p-2.5 rounded-xl">
                         <i class="fa-solid fa-exclamation-triangle mr-1"></i> Sila isi No. Meja yang sah untuk hantar ke dapur.
                     </div>
 
-<!-- Submit Button - Send Order Directly to Kitchen -->
+                    <!-- Submit Button - Send Order Directly to Kitchen -->
                     <button id="sendToKitchenBtn" onclick="sendOrderToKitchen()" class="w-full py-4 bg-[#c5a850] text-[#111e29] font-bold uppercase tracking-wider rounded-xl transition-all hover:bg-[#e6d59b] flex items-center justify-center gap-2 font-classic glow-button text-sm">
                         <i class="fa-solid fa-fire-burner text-lg animate-bounce"></i>
                         <span>Hantar Pesanan Ke Dapur</span>
@@ -341,33 +341,33 @@
             </div>
         </section>
 
-<!-- ----------------------------------------- -->
+        <!-- ----------------------------------------- -->
         <!-- 3. SUCCESS ORDER PAGE (MODAL / OVERLAY)  -->
         <!-- ----------------------------------------- -->
         <section id="successOverlay" class="fixed inset-0 bg-[#111e29]/95 z-50 flex items-center justify-center px-4 hidden">
             <div class="bg-white rounded-3xl p-6 max-w-md w-full border border-[#c5a850]/40 text-center shadow-2xl relative overflow-hidden">
                 <!-- Decorative top-border pattern -->
                 <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#c5a850] via-[#ffd700] to-[#c5a850]"></div>
-
-<div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-500/20 text-emerald-500 animate-pulse">
+                
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-500/20 text-emerald-500 animate-pulse">
                     <i class="fa-solid fa-check-double text-4xl"></i>
                 </div>
 
-<h3 class="text-2xl font-classic font-bold text-navy">Pesanan Berjaya Dihantar!</h3>
-                <p class="text-xs text-gray-500 mt-1">Meja #<span id="successTableNum" class="font-bold text-navy">0</span> • Resit: <span id="successReceiptId" class="font-mono text-gray-600 font-bold">WI-XXXX</span></p>
+                <h3 class="text-2xl font-classic font-bold text-navy">Pesanan Berjaya Dihantar!</h3>
+                <p class="text-xs text-gray-500 mt-1">Meja #<span id="successTableNum" class="font-bold text-navy">0</span> &bull; Resit: <span id="successReceiptId" class="font-mono text-gray-600 font-bold">WI-XXXX</span></p>
 
-<div class="my-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-left max-h-48 overflow-y-auto">
+                <div class="my-4 p-4 bg-gray-50 rounded-2xl border border-gray-100 text-left max-h-48 overflow-y-auto">
                     <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ringkasan Pesanan:</p>
                     <div id="successSummaryList" class="space-y-1 text-xs text-gray-700">
                         <!-- Summary list items dynamically popped here -->
                     </div>
                 </div>
 
-<p class="text-xs text-gray-500 leading-relaxed italic">
+                <p class="text-xs text-gray-500 leading-relaxed italic">
                     "Chef dapur kami sedang bersemangat menyediakannya dengan penuh kasih sayang. Sila tunggu seketika."
                 </p>
 
-<div class="mt-6 flex flex-col gap-2">
+                <div class="mt-6 flex flex-col gap-2">
                     <button onclick="closeSuccessOverlay()" class="w-full py-3 bg-[#111e29] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition">
                         Pesanan Baharu / Tambah Menu
                     </button>
@@ -376,20 +376,20 @@
             </div>
         </section>
 
-</main>
+    </main>
 
-<!-- FOOTER -->
+    <!-- FOOTER -->
     <footer class="bg-navy text-gray-400 text-center py-4 border-t border-[#c5a850]/20 text-[11px] tracking-wide relative">
         <div class="absolute inset-0 opacity-5 batik-bg pointer-events-none"></div>
         <div class="relative z-10 max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <p>© 2026 Warung Ibu. Hak Cipta Terpelihara. "Air tangan ibu sentiasa terbaik."</p>
+            <p>&copy; 2026 Warung Ibu. Hak Cipta Terpelihara. "Air tangan ibu sentiasa terbaik."</p>
             <div class="flex items-center gap-4 text-xs">
                 <span class="hover:text-white transition"><i class="fa-solid fa-utensils text-[#c5a850]"></i> Pesanan Digital Terus Ke Dapur</span>
             </div>
         </div>
     </footer>
 
-<!-- INTERACTIVE SCRIPT LOGIC (FIREBASE INTEGRATED) -->
+    <!-- INTERACTIVE SCRIPT LOGIC (FIREBASE INTEGRATED) -->
     <script>
         // ------------------------------------------------------------
         // 1. DATA - PRE-LOADED PREMIUM MENUS (10 MAKANAN & 10 MINUMAN)
@@ -492,7 +492,7 @@
                 name: "Ayam Goreng Sambal Hijau Garing",
                 category: "makanan",
                 price: 13.50,
-                description: "Ayam goreng rangup di luar, lembut di dalam disalut melimpah ruah sambal cili hijau tumbuk kasar bersama bawang merah dan perahan limau nipis segar.",
+                description: "Ayam goreng rangup di luar, lembut di dalam disalut melimpah ruah sambal cili hijau tumbuk kasar bersama bawang merah and perahan limau nipis segar.",
                 image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=600",
                 badge: "",
                 badgeColor: ""
@@ -942,19 +942,18 @@
             const receiptId = "WI-" + Math.floor(1000 + Math.random() * 9000);
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
+            // HANYA menghantar no meja, nama, harga, kuantiti item yang dipesan dan jumlah harga sahaja ke firebase
             const orderPayload = {
                 receiptId: receiptId,
                 tableNumber: tableNumberVal,
                 items: cart.map(item => ({
-                    id: item.id,
                     name: item.name,
                     price: item.price,
-                    quantity: item.quantity,
-                    category: item.category
+                    quantity: item.quantity
                 })),
                 totalPrice: totalAmount,
                 createdAt: new Date().toISOString(),
-                status: "Baru" // "Baru" status for your Admin dashboard monitor
+                status: "Baru"
             };
 
             // Firestore Operations Guards & Flow (RULE 1, RULE 3 & Exponential Backoff)
@@ -992,9 +991,9 @@
                 }
             } else {
                 // Fallback to LocalStorage inside preview environment if Firebase is not authenticated
-                const localOrders = JSON.parse(localStorage.getItem('warung_ibu_local_orders') || '[]');
+                const localOrders = JSON.parse(localStorage.getItem('war_ibu_local_orders') || '[]');
                 localOrders.push(orderPayload);
-                localStorage.setItem('warung_ibu_local_orders', JSON.stringify(localOrders));
+                localStorage.setItem('war_ibu_local_orders', JSON.stringify(localOrders));
                 console.log("No active Firebase connection. Stored fallback locally:", orderPayload);
             }
 
