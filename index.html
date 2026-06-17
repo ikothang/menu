@@ -199,12 +199,16 @@
                 
                 <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
                     <div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <span class="text-xs bg-[#c5a850]/20 text-[#c5a850] px-2.5 py-0.5 rounded-full font-bold border border-[#c5a850]/30 font-classic">
                                 MEJA <span id="displayTableNum">-</span>
                             </span>
+                            <!-- Live Digital Clock for Date & Time Display -->
+                            <span id="liveClock" class="text-[10px] text-gray-300 bg-slate-800/60 px-2 py-0.5 rounded border border-slate-700 font-medium">
+                                Memuatkan Masa...
+                            </span>
                         </div>
-                        <h2 class="text-xl font-classic font-bold tracking-wider text-white">WARUNG IBU</h2>
+                        <h2 class="text-xl font-classic font-bold tracking-wider text-white mt-1">WARUNG IBU</h2>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -394,7 +398,6 @@
         // ------------------------------------------------------------
         // 1. DATA - PRE-LOADED PREMIUM MENUS (10 MAKANAN & 10 MINUMAN)
         // ------------------------------------------------------------
-        // Setiap menu direka dengan copywriting yang menggoda rasa ("descriptive copywriting")
         const MENUS = [
             // MAKANAN (10 ITEMS)
             {
@@ -432,7 +435,7 @@
                 name: "Asam Pedas Tetel Melaka",
                 category: "makanan",
                 price: 16.90,
-                description: "Daging tetel lembu lembut berlemak dimasak dalam kuah asam pedas pekat bersama bendi segar dan tomato. Rasa masam pedas yang menyengat, membangkitkan selera makan tengah hari anda.",
+                description: "Daging tetel lembu lembut berlemak dimasak dalam kuah asam pedas pekat bersama bendi segar and tomato. Rasa masam pedas yang menyengat, membangkitkan selera makan tengah hari anda.",
                 image: "https://images.unsplash.com/photo-1626132647523-66f5bf380027?auto=format&fit=crop&q=80&w=600",
                 badge: "Pedas Power",
                 badgeColor: "bg-red-600 text-white"
@@ -612,7 +615,7 @@
         let db;
         let auth;
         
-        // Your specific Web app's Firebase configuration (Configured according to your request)
+        // Your specific Web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDyrX1WmJ67x3w5PDAW6v2yJazT49ZQa7g",
             authDomain: "restoran-dd4bd.firebaseapp.com",
@@ -655,14 +658,35 @@
                 }, 1000);
             }
 
+            // Start Live Clock
+            startLiveClock();
             // Render all items initially
             renderMenuGrid();
         });
 
 
         // ------------------------------------------------------------
-        // 3. PAGE NAVIGATION & TABLE SELECTION LOGIC
+        // 3. PAGE NAVIGATION, TABLE SELECTION & LIVE CLOCK
         // ------------------------------------------------------------
+        function startLiveClock() {
+            const clockEl = document.getElementById('liveClock');
+            if (!clockEl) return;
+            
+            function updateClock() {
+                const now = new Date();
+                const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const dateOptions = { weekday: 'short', day: 'numeric', month: 'short' };
+                
+                const timeString = now.toLocaleTimeString('ms-MY', timeOptions);
+                const dateString = now.toLocaleDateString('ms-MY', dateOptions);
+                
+                clockEl.innerHTML = `<i class="fa-regular fa-clock text-gold mr-1"></i> ${dateString} &bull; ${timeString}`;
+            }
+            
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
         function proceedToMenu() {
             const tableInput = document.getElementById('tableNumber');
             const errorDiv = document.getElementById('tableError');
@@ -823,8 +847,6 @@
 
             // Simple notification badge update
             updateCartBadgesOnly();
-
-            // Interactive animation feedback inside item's card button could go here
         }
 
         function updateCartBadgesOnly() {
@@ -915,7 +937,7 @@
 
 
         // ------------------------------------------------------------
-        // 6. FIREBASE ORDER SUBMISSION (COMPLIES WITH LAWS OF canvas ENVIRONMENT)
+        // 6. FIREBASE ORDER SUBMISSION (UPDATED STATUS & TIME LAWS)
         // ------------------------------------------------------------
         async function sendOrderToKitchen() {
             if (cart.length === 0) {
@@ -942,7 +964,8 @@
             const receiptId = "WI-" + Math.floor(1000 + Math.random() * 9000);
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
-            // HANYA menghantar no meja, nama, harga, kuantiti item yang dipesan dan jumlah harga sahaja ke firebase
+            // Mengubah status kepada 'Unpaid' mengikut permintaan anda agar diselaraskan terus dengan halaman admin.html
+            // Tarikh dan masa di-capture dalam format ISO universal (createdAt) yang membolehkan manipulasi zon masa tempatan di halaman admin
             const orderPayload = {
                 receiptId: receiptId,
                 tableNumber: tableNumberVal,
@@ -952,8 +975,8 @@
                     quantity: item.quantity
                 })),
                 totalPrice: totalAmount,
-                createdAt: new Date().toISOString(),
-                status: "Baru"
+                createdAt: new Date().toISOString(), // Direkodkan dengan masa & tarikh tepat server/browser
+                paymentStatus: "Unpaid" // Ditukar terus kepada 'Unpaid' bermula di menu pelanggan
             };
 
             // Firestore Operations Guards & Flow (RULE 1, RULE 3 & Exponential Backoff)
