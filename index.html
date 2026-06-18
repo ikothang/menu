@@ -9,7 +9,7 @@
     <!-- Google Fonts for branding & elegant readability -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2 family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -464,14 +464,19 @@
                     dynamicMenus = data.map(item => {
                         let imageUrl = item.image || '';
                         
-                        // DEFENSIVE FIX: Semak jika image hanyalah nama fail/laluan relatif, bina URL penuh Supabase Storage
-                        if (imageUrl && !imageUrl.startsWith('http')) {
-                            // Buang sebarang '/' di hadapan jika ada
-                            const cleanPath = imageUrl.replace(/^\/+/, '');
-                            imageUrl = `${cloudDbUrl}/storage/v1/object/public/menu/${cleanPath}`;
+                        // DEFENSIVE FIX: Semak dan bersihkan URL gambar jika berlaku kesilapan format base url
+                        if (imageUrl) {
+                            // Menggantikan kesilapan penggandaan base url dalam getPublicUrl (misal: /rest/v1/storage/v1)
+                            imageUrl = imageUrl.replace('/rest/v1/storage/v1/', '/storage/v1/');
+                            
+                            // Semak jika ia hanya nama fail / laluan relatif, bina URL storan awan penuh
+                            if (!imageUrl.startsWith('http')) {
+                                const cleanPath = imageUrl.replace(/^\/+/, '');
+                                imageUrl = `${cloudDbUrl}/storage/v1/object/public/menu/${cleanPath}`;
+                            }
                         }
                         
-                        // Set placeholder berkualiti tinggi jika tiada gambar
+                        // Set placeholder berkualiti tinggi jika tiada gambar langsung
                         if (!imageUrl) {
                             imageUrl = 'https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar';
                         }
