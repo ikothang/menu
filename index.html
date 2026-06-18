@@ -9,7 +9,7 @@
     <!-- Google Fonts for branding & elegant readability -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2 family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -464,15 +464,24 @@
                     dynamicMenus = data.map(item => {
                         let imageUrl = item.image || '';
                         
-                        // DEFENSIVE FIX: Semak dan bersihkan URL gambar jika berlaku kesilapan format base url
+                        // DEFENSIVE FIX: Memastikan imej dimuat naik daripada bucket storan dikesan dengan tepat
                         if (imageUrl) {
-                            // Menggantikan kesilapan penggandaan base url dalam getPublicUrl (misal: /rest/v1/storage/v1)
+                            // Bersihkan URL sekiranya terdapat sebarang ralat penggandaan laluan dalam database
                             imageUrl = imageUrl.replace('/rest/v1/storage/v1/', '/storage/v1/');
                             
-                            // Semak jika ia hanya nama fail / laluan relatif, bina URL storan awan penuh
-                            if (!imageUrl.startsWith('http')) {
-                                const cleanPath = imageUrl.replace(/^\/+/, '');
+                            // Sekiranya laluan disimpan sebagai nama fail sahaja atau laluan separa (seperti "menu/fail.png")
+                            if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+                                let cleanPath = imageUrl;
+                                // Buang rujukan prefix bucket "menu/" sekiranya ia telah wujud dalam string path
+                                if (cleanPath.startsWith('menu/')) {
+                                    cleanPath = cleanPath.substring(5);
+                                }
+                                cleanPath = cleanPath.replace(/^\/+/, '');
+                                // Bina laluan terus menggunakan URL storan awam Supabase
                                 imageUrl = `${cloudDbUrl}/storage/v1/object/public/menu/${cleanPath}`;
+                            } else if (imageUrl.includes('/storage/v1/object/sign/')) {
+                                // Sekiranya ia menggunakan URL berasingan bertandatangan yang mungkin tamat tempoh, kita tukar kepada laluan awam public
+                                imageUrl = imageUrl.replace('/storage/v1/object/sign/', '/storage/v1/object/public/');
                             }
                         }
                         
@@ -529,6 +538,9 @@
             setInterval(updateClock, 1000);
         }
 
+        // ------------------------------------------------------------
+        // PROCEED TO MENU PAGE WITH TABLE VALIDATION
+        // ------------------------------------------------------------
         function proceedToMenu() {
             const tableInput = document.getElementById('tableNumber');
             const errorDiv = document.getElementById('tableError');
@@ -588,7 +600,7 @@
                 
                 card.innerHTML = `
                     <div class="relative overflow-hidden aspect-[4/3] bg-gray-100">
-                        <img src="${item.image}" alt="Gambar ${item.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="${item.image}" alt="Gambar ${item.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x450/eaeaea/999999?text=Sajian+Tradisi'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         ${item.badge ? `<span class="absolute top-3 left-3 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-md ${item.badgeColor || 'bg-[#c5a850] text-navy'}">${item.badge}</span>` : ''}
                         <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
                     </div>
@@ -638,6 +650,9 @@
             renderMenuGrid(filtered);
         }
 
+        // ------------------------------------------------------------
+        // MOBILE ONLY SEARCH FILTER
+        // ------------------------------------------------------------
         function filterMenuMobile() {
             const inputVal = document.getElementById('searchInputMobile').value.toLowerCase();
             const filtered = dynamicMenus.filter(item => {
@@ -743,7 +758,7 @@
                 row.className = "flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100";
                 row.innerHTML = `
                     <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
-                        <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar'" class="w-full h-full object-cover">
+                        <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x450/eaeaea/999999?text=Sajian+Tradisi'" class="w-full h-full object-cover">
                     </div>
                     <div class="flex-grow min-w-0">
                         <h5 class="text-xs font-bold text-gray-800 truncate">${item.name}</h5>
