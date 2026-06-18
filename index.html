@@ -37,14 +37,7 @@
             font-family: 'Cinzel', serif;
         }
 
-        /* Royal Batik Classic Theme Colors: 
-           Deep Indigo/Blue-Grey: #1a2e40
-           Rich Gold: #c5a850 
-           Warm Bronze/Brown: #5c4033
-           Cream/Soft White: #fcfbf7
-        */
-
-        /* Traditional Batik Pattern Overlay Background */
+        /* Royal Batik Classic Theme Colors */
         .batik-bg {
             background-color: #111e29;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0l40 40-40 40L0 40z' fill='%23c5a850' fill-opacity='0.08'/%3E%3Cpath d='M40 10l30 30-30 30-30-30z' fill='%231a2e40' fill-opacity='0.2'/%3E%3Ccircle cx='40' cy='40' r='5' fill='%23c5a850' fill-opacity='0.3'/%3E%3C/svg%3E");
@@ -55,7 +48,6 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23c5a850' fill-opacity='0.04'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%23c5a850' fill-opacity='0.15'/%3E%3C/svg%3E");
         }
 
-        /* Gold Gradient Borders */
         .border-gold-gradient {
             border-image: linear-gradient(to right, #c5a850, #ecdca5, #c5a850) 1;
         }
@@ -76,12 +68,10 @@
             background-color: #111e29;
         }
 
-        /* Smooth page transition animations */
         .page-transition {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Custom Scrollbar for premium feel */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -93,7 +83,6 @@
             border-radius: 10px;
         }
 
-        /* Pulsing Glow for interactive elements */
         .glow-button {
             box-shadow: 0 4px 20px rgba(197, 168, 80, 0.25);
             transition: all 0.3s ease;
@@ -103,7 +92,6 @@
             transform: translateY(-2px);
         }
 
-        /* Banner Batik Border styling */
         .batik-border-top {
             background-image: radial-gradient(circle at 50% 120%, #c5a850 3px, transparent 4px),
                               radial-gradient(circle at 50% 140%, #111e29 6px, transparent 7px);
@@ -117,7 +105,6 @@
     <!-- OVERLAY LOADING SPINNER -->
     <div id="loadingOverlay" class="fixed inset-0 bg-[#111e29] z-50 flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="relative w-24 h-24 mb-4">
-            <!-- Rotating Traditional Floral/Batik Mandala Style Loader -->
             <div class="absolute inset-0 border-4 border-dashed border-[#c5a850] rounded-full animate-spin"></div>
             <div class="absolute inset-2 border-2 border-double border-white rounded-full flex items-center justify-center">
                 <span class="text-[#c5a850] font-classic font-bold text-lg">WI</span>
@@ -127,12 +114,9 @@
         <p class="text-xs text-gray-400 mt-2">"Air tangan ibu sentiasa terbaik"</p>
     </div>
 
-    <!-- MAIN APP WRAPPER -->
     <main class="flex-grow flex flex-col">
         
-        <!-- ----------------------------------------- -->
-        <!-- 1. WELCOME PAGE                           -->
-        <!-- ----------------------------------------- -->
+        <!-- WELCOME PAGE -->
         <section id="welcomePage" class="page-transition flex-grow flex flex-col justify-between batik-bg text-white relative py-8 px-4">
             <!-- Decorative Batik Corner Accents -->
             <div class="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-[#c5a850] opacity-60 m-4"></div>
@@ -172,7 +156,7 @@
                         </div>
                     </div>
 
-                    <!-- Client Error Message (Custom Modal-style Alert inline) -->
+                    <!-- Client Error Message -->
                     <div id="tableError" class="hidden text-center text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2 rounded-lg">
                         <i class="fa-solid fa-circle-exclamation mr-1"></i> Sila masukkan nombor meja yang sah (1-150) sebelum meneruskan.
                     </div>
@@ -184,15 +168,12 @@
                 </div>
             </div>
 
-            <!-- Footer Traditional Pattern Statement -->
             <div class="text-center text-[10px] text-gray-400 tracking-widest uppercase z-10 mb-2">
                 Warisan Masakan Melayu Nusantara &bull; Sejak 1982
             </div>
         </section>
 
-        <!-- ----------------------------------------- -->
-        <!-- 2. MENU PAGE (MAIN APP CONTENT)           -->
-        <!-- ----------------------------------------- -->
+        <!-- MENU PAGE (MAIN APP CONTENT) -->
         <section id="menuPage" class="page-transition hidden flex-grow flex flex-col">
             
             <!-- Sticky Elegant Header -->
@@ -229,7 +210,7 @@
                 </div>
             </header>
 
-            <!-- Marketing Hook Hero Banner (Crafted to Convert Sales) -->
+            <!-- Marketing Hook Hero Banner -->
             <div class="bg-[#1a2e40] text-white py-6 px-4 text-center relative overflow-hidden shadow-inner border-b border-[#c5a850]/30">
                 <div class="absolute inset-0 opacity-10 batik-bg"></div>
                 <div class="relative z-10 max-w-2xl mx-auto">
@@ -348,9 +329,7 @@
             </div>
         </section>
 
-        <!-- ----------------------------------------- -->
-        <!-- 3. SUCCESS ORDER PAGE (MODAL / OVERLAY)  -->
-        <!-- ----------------------------------------- -->
+        <!-- SUCCESS ORDER PAGE (MODAL / OVERLAY)  -->
         <section id="successOverlay" class="fixed inset-0 bg-[#111e29]/95 z-50 flex items-center justify-center px-4 hidden">
             <div class="bg-white rounded-3xl p-6 max-w-md w-full border border-[#c5a850]/40 text-center shadow-2xl relative overflow-hidden">
                 <!-- Decorative top-border pattern -->
@@ -396,7 +375,6 @@
         </div>
     </footer>
 
-    <!-- INTERACTIVE SCRIPT LOGIC (FIREBASE & CLOUD DATABASE INTEGRATED) -->
     <script>
         let dynamicMenus = []; // List memegang data sajian dinamik yang diambil dari pangkalan data awan
         let cart = [];
@@ -483,16 +461,32 @@
 
                 if (data && data.length > 0) {
                     // Map cloud database items into standard local objects
-                    dynamicMenus = data.map(item => ({
-                        id: item.id.toString(),
-                        name: item.name,
-                        category: item.category || 'makanan',
-                        price: parseFloat(item.price),
-                        description: item.description || '',
-                        image: item.image || 'https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar',
-                        badge: item.badge || '',
-                        badgeColor: item.badge_color || ''
-                    }));
+                    dynamicMenus = data.map(item => {
+                        let imageUrl = item.image || '';
+                        
+                        // DEFENSIVE FIX: Semak jika image hanyalah nama fail/laluan relatif, bina URL penuh Supabase Storage
+                        if (imageUrl && !imageUrl.startsWith('http')) {
+                            // Buang sebarang '/' di hadapan jika ada
+                            const cleanPath = imageUrl.replace(/^\/+/, '');
+                            imageUrl = `${cloudDbUrl}/storage/v1/object/public/menu/${cleanPath}`;
+                        }
+                        
+                        // Set placeholder berkualiti tinggi jika tiada gambar
+                        if (!imageUrl) {
+                            imageUrl = 'https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar';
+                        }
+
+                        return {
+                            id: item.id.toString(),
+                            name: item.name,
+                            category: item.category || 'makanan',
+                            price: parseFloat(item.price),
+                            description: item.description || '',
+                            image: imageUrl,
+                            badge: item.badge || '',
+                            badgeColor: item.badge_color || ''
+                        };
+                    });
                     console.log(`Successfully synced ${dynamicMenus.length} items from Cloud Database.`);
                 } else {
                     console.log("Cloud database table is empty.");
@@ -744,7 +738,7 @@
                 row.className = "flex items-center justify-between gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100";
                 row.innerHTML = `
                     <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
-                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                        <img src="${item.image}" alt="${item.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar'" class="w-full h-full object-cover">
                     </div>
                     <div class="flex-grow min-w-0">
                         <h5 class="text-xs font-bold text-gray-800 truncate">${item.name}</h5>
@@ -816,7 +810,6 @@
 
                 while (attempt < maxRetries && !success) {
                     try {
-                        // Firebase standard strict artifacts path (RULE 1 COMPLIANT)
                         const ordersCollectionRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('orders');
                         
                         await ordersCollectionRef.doc(receiptId).set(orderPayload);
