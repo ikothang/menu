@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warung Ibu - Menu Digital Interaktif</title>
-    <!-- Tailwind CSS for utility base -->
+    <!-- Tailwind CSS for high quality utility classes -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for elegant typography -->
+    <!-- Google Fonts for branding & elegant readability -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDKs (Compatibility versions for standard global 'firebase' object) -->
+    <!-- Firebase SDKs (Compatibility versions for globally scoped vanilla objects) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <!-- Cloud Database SDK Client (Separated to protect project credentials) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* Custom Premium Fonts & Theme Styling */
@@ -165,13 +168,13 @@
                             </span>
                             <input type="number" id="tableNumber" placeholder="Contoh: 5, 12, 24" 
                                 class="w-full pl-10 pr-4 py-3 bg-[#111e29]/80 border border-[#c5a850]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#c5a850] focus:border-transparent text-white font-bold placeholder-gray-500 transition text-center text-lg" 
-                                min="1" max="100" required>
+                                min="1" max="150" required>
                         </div>
                     </div>
 
                     <!-- Client Error Message (Custom Modal-style Alert inline) -->
                     <div id="tableError" class="hidden text-center text-xs text-red-400 bg-red-950/40 border border-red-900/50 p-2 rounded-lg">
-                        <i class="fa-solid fa-circle-exclamation mr-1"></i> Sila masukkan nombor meja yang sah sebelum meneruskan.
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i> Sila masukkan nombor meja yang sah (1-150) sebelum meneruskan.
                     </div>
 
                     <button onclick="proceedToMenu()" class="w-full py-4 bg-[#c5a850] text-[#111e29] font-bold uppercase tracking-wider rounded-xl glow-button font-classic transition-all hover:bg-[#e6d59b] flex items-center justify-center gap-2 text-sm mt-2">
@@ -254,7 +257,7 @@
                         </button>
                     </div>
                     
-                    <!-- Quick Search Bar -->
+                    <!-- Quick Search Bar (Desktop) -->
                     <div class="relative hidden sm:block">
                         <input type="text" id="searchInput" onkeyup="filterMenu()" placeholder="Cari sajian idaman..." 
                             class="pl-8 pr-4 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#c5a850] w-48">
@@ -283,7 +286,7 @@
                 <div id="noResults" class="hidden text-center py-16">
                     <div class="text-[#c5a850] text-5xl mb-4"><i class="fa-regular fa-face-frown"></i></div>
                     <h4 class="text-lg font-serif-elegant font-bold text-gray-800">Sajian Tidak Dijumpai</h4>
-                    <p class="text-xs text-gray-500 mt-1">Cuba cari menu hidangan ibu yang lain.</p>
+                    <p class="text-xs text-gray-500 mt-1">Sila pastikan menu telah didaftarkan dalam portal admin pangkalan data awan.</p>
                 </div>
             </div>
 
@@ -307,7 +310,7 @@
                         <span class="p-1.5 bg-[#c5a850]/20 rounded-lg text-[#c5a850]"><i class="fa-solid fa-file-invoice"></i></span>
                         <div>
                             <h3 class="font-classic font-bold text-base tracking-wide">Troli Pesanan Meja <span id="cartTableNum">-</span></h3>
-                            <p class="text-[10px] text-gray-400">Pastikan hidangan anda mencukupi</p>
+                            <p class="text-[10px] text-gray-400">Sila pastikan semua hidangan mencukupi</p>
                         </div>
                     </div>
                     <button onclick="toggleCart()" class="p-1.5 hover:bg-gray-800 rounded-lg text-gray-300 transition-colors">
@@ -393,230 +396,14 @@
         </div>
     </footer>
 
-    <!-- INTERACTIVE SCRIPT LOGIC (FIREBASE INTEGRATED) -->
+    <!-- INTERACTIVE SCRIPT LOGIC (FIREBASE & CLOUD DATABASE INTEGRATED) -->
     <script>
-        // ------------------------------------------------------------
-        // 1. DATA - PRE-LOADED PREMIUM MENUS (10 MAKANAN & 10 MINUMAN)
-        // ------------------------------------------------------------
-        // Setiap menu direka dengan copywriting yang menggoda rasa ("descriptive copywriting")
-        const MENUS = [
-            // MAKANAN (10 ITEMS)
-            {
-                id: "mkn_01",
-                name: "Nasi Lemak Ayam Berempah Ibu",
-                category: "makanan",
-                price: 15.90,
-                description: "Nasi lemak basmati aromatik pandan, dihidang bersama ayam goreng berempah rangup bersalut rempah rahsia, telur rebus, timun segar, dan sambal tumis pusaka ibu yang manis pedas mengasyikkan.",
-                image: "https://arleta.site/interactivelink/4826/nasi-lemak.jpg",
-                badge: "Terlaris",
-                badgeColor: "bg-red-500 text-white"
-            },
-            {
-                id: "mkn_02",
-                name: "Rendang Daging Tok Warisan",
-                category: "makanan",
-                price: 18.50,
-                description: "Daging lembu lembut premium dimasak perlahan selama 8 jam dalam santan pekat, kerisik kelapa sangrai, dan adunan herba tradisional serai serta daun kunyit segar. Kaya aroma melimpah rasa asli.",
-                image: "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&q=80&w=600",
-                badge: "Istimewa Ibu",
-                badgeColor: "bg-amber-600 text-white"
-            },
-            {
-                id: "mkn_03",
-                name: "Mee Bandung Muar Diraja",
-                category: "makanan",
-                price: 14.50,
-                description: "Mee kuning disiram kuah udang kering pekat yang manis-manis pedas, lengkap bersama hirisan daging segar, udang laut, telur rebus separuh masak, sayur sawi, dan taburan bawang goreng harum.",
-                image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mkn_04",
-                name: "Asam Pedas Tetel Melaka",
-                category: "makanan",
-                price: 16.90,
-                description: "Daging tetel lembu lembut berlemak dimasak dalam kuah asam pedas pekat bersama bendi segar and tomato. Rasa masam pedas yang menyengat, membangkitkan selera makan tengah hari anda.",
-                image: "https://images.unsplash.com/photo-1626132647523-66f5bf380027?auto=format&fit=crop&q=80&w=600",
-                badge: "Pedas Power",
-                badgeColor: "bg-red-600 text-white"
-            },
-            {
-                id: "mkn_05",
-                name: "Nasi Goreng Kampung Udang Galah",
-                category: "makanan",
-                price: 24.00,
-                description: "Nasi goreng penuh rasa kuali 'wok hei' dibumbui ikan bilis rangup, cili padi kampung, kangkung segar, dan dihiasi dengan dua ekor Udang Galah premium panggang mentega.",
-                image: "https://images.unsplash.com/photo-1603133872878-6966b46179b5?auto=format&fit=crop&q=80&w=600",
-                badge: "Premium",
-                badgeColor: "bg-[#c5a850] text-navy"
-            },
-            {
-                id: "mkn_06",
-                name: "Laksa Utara Pantai Merdeka",
-                category: "makanan",
-                price: 11.90,
-                description: "Mee laksa beras tulen disiram kuah ikan kembung pekat berkrim, dibumbui daun kesum, bunga kantan, hirisan bawang merah, cili padi, telur, dan sedikit otak udang premium.",
-                image: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mkn_07",
-                name: "Soto Ayam Kampung Bergedil",
-                category: "makanan",
-                price: 12.50,
-                description: "Ketupat nasi lembut disiram sup ayam berempah kuning keemasan, lengkap dengan carikan ayam kampung, suhun goreng, kacang tanah, begedil ubi buatan tangan, dan sambal kicap johor.",
-                image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mkn_08",
-                name: "Ayam Masak Lemak Cili Padi",
-                category: "makanan",
-                price: 14.80,
-                description: "Potongan ayam kampung dimasak bersama santan kelapa tulen, kunyit hidup, dan tumbukan cili padi yang pedas menyengat. Resipi asli Negeri Sembilan yang memukau lidah.",
-                image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&q=80&w=600",
-                badge: "Popular",
-                badgeColor: "bg-orange-500 text-white"
-            },
-            {
-                id: "mkn_09",
-                name: "Lontong Sayur Kuah Lodeh",
-                category: "makanan",
-                price: 12.00,
-                description: "Nasi impit lembut dalam kuah sayur lodeh lemak berkrim, dilengkapi sayur-sayuran segar, tauhu, tempe goreng, telur rebus, dan sudu sambal ikan bilis tumis khas ibu.",
-                image: "https://images.unsplash.com/photo-1632230224213-33924f2b0f49?auto=format&fit=crop&q=80&w=600",
-                badge: "Tradisi",
-                badgeColor: "bg-[#111e29] text-white"
-            },
-            {
-                id: "mkn_10",
-                name: "Ayam Goreng Sambal Hijau Garing",
-                category: "makanan",
-                price: 13.50,
-                description: "Ayam goreng rangup di luar, lembut di dalam disalut melimpah ruah sambal cili hijau tumbuk kasar bersama bawang merah and perahan limau nipis segar.",
-                image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-
-            // MINUMAN (10 ITEMS)
-            {
-                id: "mnm_01",
-                name: "Teh Tarik Madu Berbuih",
-                category: "minuman",
-                price: 6.50,
-                description: "Teh ceylon pekat berkualiti dibancuh bersama susu manis, ditarik sempurna sehingga berbuih tebal, dan disiram madu asli hutan tropika di bahagian atasnya.",
-                image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=600",
-                badge: "Wajib Cuba",
-                badgeColor: "bg-[#c5a850] text-[#111e29]"
-            },
-            {
-                id: "mnm_02",
-                name: "Sirap Bandung Soda Selasih",
-                category: "minuman",
-                price: 5.50,
-                description: "Gabungan klasik pati rose wangi gred premium, air soda bergas, susu sejat berkrim, dihiasi dengan biji selasih lembut penyejuk badan.",
-                image: "https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&q=80&w=600",
-                badge: "Segar",
-                badgeColor: "bg-pink-500 text-white"
-            },
-            {
-                id: "mnm_03",
-                name: "Kopi Kampung Kaw Ibu (Panas/Ais)",
-                category: "minuman",
-                price: 4.80,
-                description: "Kopi hitam biji tempatan yang dipanggang dengan mentega, ditapis tradisional memberikan kepekatan 'kaw' yang memuaskan jiwa pencinta kopi.",
-                image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=600",
-                badge: "Ibu Pick",
-                badgeColor: "bg-yellow-800 text-white"
-            },
-            {
-                id: "mnm_04",
-                name: "Jus Mangga Lemak Manis",
-                category: "minuman",
-                price: 8.90,
-                description: "Jus segar daripada mangga susu ranum berkualiti tinggi yang dikisar halus dengan sedikit susu berkrim, menghasilkan minuman pekat yang menyegarkan tekak.",
-                image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mnm_05",
-                name: "Cendol Durian D24",
-                category: "minuman",
-                price: 12.90,
-                description: "Ais sagat halus disiram santan segar berlemak, gula melaka pekat asli, cendol pandan hijau buatan sendiri, kacang merah premium, dan seulas durian D24 yang mewah.",
-                image: "https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fit=crop&q=80&w=600",
-                badge: "Premium",
-                badgeColor: "bg-emerald-600 text-white"
-            },
-            {
-                id: "mnm_06",
-                name: "Air Kelapa Muda Pandan",
-                category: "minuman",
-                price: 6.90,
-                description: "Air kelapa muda segar beraroma pandan yang dipetik segar, disajikan bersama isi kelapa lembut dan ketulan ais sejuk, tanpa gula tambahan.",
-                image: "https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mnm_07",
-                name: "Limau Ais Kasturi Pudina",
-                category: "minuman",
-                price: 4.50,
-                description: "Perahan buah limau kasturi segar yang masam manis penyejuk dahaga, digabungkan dengan daun pudina segar yang memberikan sensasi herba segar.",
-                image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mnm_08",
-                name: "Milo Dinosaur Kaw",
-                category: "minuman",
-                price: 6.80,
-                description: "Minuman coklat malt kegemaran ramai dibancuh sejuk pekat berkrim, dihiasi dengan timbunan serbuk Milo berkualiti tinggi melimpah ruah di atasnya.",
-                image: "https://images.unsplash.com/photo-1541658016709-82535e94bc69?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mnm_09",
-                name: "Teh O Ais Limau Berdaun Pandan",
-                category: "minuman",
-                price: 4.20,
-                description: "Teh O gred terpilih yang digabungkan bersama perahan lemon segar dan diselitkan dengan aroma daun pandan wangi asli.",
-                image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=600",
-                badge: "",
-                badgeColor: ""
-            },
-            {
-                id: "mnm_10",
-                name: "Air Barli Lemon Tradisional",
-                category: "minuman",
-                price: 5.00,
-                description: "Biji barli tulen yang direbus perlahan bersama sedikit gula batu, dihidang sejuk dengan hirisan buah lemon segar yang meningkatkan imuniti badan.",
-                image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=600",
-                badge: "Sihat",
-                badgeColor: "bg-[#111e29] text-white"
-            }
-        ];
-
-        // Global State variables
+        let dynamicMenus = []; // List memegang data sajian dinamik yang diambil dari pangkalan data awan
         let cart = [];
         let currentCategory = 'all';
         let tableNumberVal = '';
 
-        // ------------------------------------------------------------
-        // 2. FIREBASE SETUP & CONSTRAINTS (MANDATORY)
-        // ------------------------------------------------------------
-        let db;
-        let auth;
-        
-        // Your specific Web app's Firebase configuration
+        // Firebase Credentials
         const firebaseConfig = {
             apiKey: "AIzaSyDyrX1WmJ67x3w5PDAW6v2yJazT49ZQa7g",
             authDomain: "restoran-dd4bd.firebaseapp.com",
@@ -628,29 +415,44 @@
             measurementId: "G-GME7877LYX"
         };
 
+        // Credentials Pangkalan Data Awan
+        const cloudDbUrl = "https://oojoyzswnnaygfracomu.supabase.co";
+        const cloudDbAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vam95enN3bm5heWdmcmFjb211Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3Nzk2NDUsImV4cCI6MjA5NzM1NTY0NX0.MfD_3-S1LM3uQ-BJqvsUxr40j2f3yLbc9gYIvEGEwo8";
+
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'restoran-dd4bd';
 
-        // Initialize Firebase on window load
+        let db;
+        let auth;
+        let cloudDbClient;
+
+        // ------------------------------------------------------------
+        // APPLICATION DOM LOAD & INITIALIZATION
+        // ------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', async () => {
+            startLiveClock();
+
             try {
-                // If environment provides active config dynamically we'll use that, else we strictly default to your project config
-                const activeConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
-                
-                const app = firebase.initializeApp(activeConfig);
+                // Initialize Firebase SDK
+                const app = firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth(app);
                 db = firebase.firestore(app);
 
-                // Call Auth First (MANDATORY RULE 3)
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await firebase.auth().signInWithCustomToken(__initial_auth_token);
-                } else {
-                    await firebase.auth().signInAnonymously();
-                }
-                console.log("Firebase initialized successfully on project:", activeConfig.projectId);
+                // Sign in anonymously for Firebase Firestore Writes
+                await firebase.auth().signInAnonymously();
+
+                // Initialize Cloud Database Client
+                cloudDbClient = supabase.createClient(cloudDbUrl, cloudDbAnonKey);
+                console.log("Cloud Database Client initialized successfully.");
+
+                // Load menu dynamically from cloud database (No fallback as requested)
+                await fetchCloudMenus();
+
             } catch (err) {
-                console.error("Firebase Auth Error:", err);
+                console.error("Initialization / Sync Error:", err);
+                dynamicMenus = [];
+                renderMenuGrid();
             } finally {
-                // Hide custom luxury loader
+                // Hide loader overlay
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').classList.add('opacity-0');
                     setTimeout(() => {
@@ -658,16 +460,56 @@
                     }, 300);
                 }, 1000);
             }
-
-            // Start Live Clock
-            startLiveClock();
-            // Render all items initially
-            renderMenuGrid();
         });
 
+        // ------------------------------------------------------------
+        // FETCH DYNAMIC MENUS FROM CLOUD DATABASE (NO FALLBACK MODE)
+        // ------------------------------------------------------------
+        async function fetchCloudMenus() {
+            if (!cloudDbClient) {
+                dynamicMenus = [];
+                renderMenuGrid();
+                return;
+            }
+
+            try {
+                // Fetch from list_menu table
+                const { data, error } = await cloudDbClient
+                    .from('list_menu')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    // Map cloud database items into standard local objects
+                    dynamicMenus = data.map(item => ({
+                        id: item.id.toString(),
+                        name: item.name,
+                        category: item.category || 'makanan',
+                        price: parseFloat(item.price),
+                        description: item.description || '',
+                        image: item.image || 'https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar',
+                        badge: item.badge || '',
+                        badgeColor: item.badge_color || ''
+                    }));
+                    console.log(`Successfully synced ${dynamicMenus.length} items from Cloud Database.`);
+                } else {
+                    console.log("Cloud database table is empty.");
+                    dynamicMenus = [];
+                }
+
+            } catch (err) {
+                console.error("Failed to fetch cloud database menus. Setting menu to empty:", err);
+                dynamicMenus = [];
+            }
+
+            // Render menus in grid
+            renderMenuGrid();
+        }
 
         // ------------------------------------------------------------
-        // 3. PAGE NAVIGATION, TABLE SELECTION & LIVE CLOCK
+        // JAM DIGITAL & PILIHAN MEJA
         // ------------------------------------------------------------
         function startLiveClock() {
             const clockEl = document.getElementById('liveClock');
@@ -700,17 +542,16 @@
             }
 
             errorDiv.classList.add('hidden');
-            tableNumberVal = parseInt(tableNum).toString(); // Format neatly
+            tableNumberVal = parseInt(tableNum).toString();
 
-            // Update UI components with current table number
+            // Update table references
             document.getElementById('displayTableNum').innerText = tableNumberVal;
             document.getElementById('cartTableNum').innerText = tableNumberVal;
 
-            // Transition pages smoothly
+            // Page Transitions
             document.getElementById('welcomePage').classList.add('hidden');
             document.getElementById('menuPage').classList.remove('hidden');
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -719,17 +560,15 @@
             document.getElementById('welcomePage').classList.remove('hidden');
         }
 
-
         // ------------------------------------------------------------
-        // 4. RENDERING & FILTERING MENU ITEMS
+        // RENDER & PENAPISAN MENU INTERAKTIF
         // ------------------------------------------------------------
-        function renderMenuGrid(itemsToRender = MENUS) {
+        function renderMenuGrid(itemsToRender = dynamicMenus) {
             const grid = document.getElementById('menuItemsGrid');
             const noRes = document.getElementById('noResults');
             
             grid.innerHTML = '';
 
-            // Filter by active Category Tab
             let filtered = itemsToRender;
             if (currentCategory !== 'all') {
                 filtered = itemsToRender.filter(item => item.category === currentCategory);
@@ -745,15 +584,13 @@
             }
 
             filtered.forEach(item => {
-                // Create highly conversion-driven card styling
                 const card = document.createElement('div');
                 card.className = "bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col justify-between group";
                 
-                // Construct inner HTML
                 card.innerHTML = `
                     <div class="relative overflow-hidden aspect-[4/3] bg-gray-100">
-                        <img src="${item.image}" alt="Gambar ${item.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=600'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        ${item.badge ? `<span class="absolute top-3 left-3 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-md ${item.badgeColor}">${item.badge}</span>` : ''}
+                        <img src="${item.image}" alt="Gambar ${item.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        ${item.badge ? `<span class="absolute top-3 left-3 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full shadow-md ${item.badgeColor || 'bg-[#c5a850] text-navy'}">${item.badge}</span>` : ''}
                         <div class="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
                     </div>
 
@@ -779,11 +616,9 @@
             });
         }
 
-        // Category Tab Switching
         function switchCategory(cat) {
             currentCategory = cat;
             
-            // Update active states in UI
             document.querySelectorAll('.category-tab').forEach(tab => {
                 tab.classList.remove('bg-navy', 'text-white', 'shadow-sm');
                 tab.classList.add('text-gray-600', 'hover:text-navy');
@@ -793,14 +628,12 @@
             activeTab.classList.remove('text-gray-600', 'hover:text-navy');
             activeTab.classList.add('bg-navy', 'text-white', 'shadow-sm');
 
-            // Apply filter
             filterMenu();
         }
 
-        // Live Search Filtering
         function filterMenu() {
             const inputVal = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = MENUS.filter(item => {
+            const filtered = dynamicMenus.filter(item => {
                 return item.name.toLowerCase().includes(inputVal) || item.description.toLowerCase().includes(inputVal);
             });
             renderMenuGrid(filtered);
@@ -808,15 +641,14 @@
 
         function filterMenuMobile() {
             const inputVal = document.getElementById('searchInputMobile').value.toLowerCase();
-            const filtered = MENUS.filter(item => {
+            const filtered = dynamicMenus.filter(item => {
                 return item.name.toLowerCase().includes(inputVal) || item.description.toLowerCase().includes(inputVal);
             });
             renderMenuGrid(filtered);
         }
 
-
         // ------------------------------------------------------------
-        // 5. CART SYSTEM LOGIC
+        // SISTEM TROLI (CART DRAWER)
         // ------------------------------------------------------------
         function toggleCart() {
             const drawer = document.getElementById('cartDrawer');
@@ -833,7 +665,7 @@
         }
 
         function addToCart(itemId) {
-            const foundItem = MENUS.find(m => m.id === itemId);
+            const foundItem = dynamicMenus.find(m => m.id === itemId);
             if (!foundItem) return;
 
             const existingCartItem = cart.find(item => item.id === itemId);
@@ -846,7 +678,6 @@
                 });
             }
 
-            // Simple notification badge update
             updateCartBadgesOnly();
         }
 
@@ -936,9 +767,8 @@
             summaryTotal.innerText = `RM ${totalAmount.toFixed(2)}`;
         }
 
-
         // ------------------------------------------------------------
-        // 6. FIREBASE ORDER SUBMISSION (UPDATED STATUS & TIME LAWS)
+        // HANTAR PESANAN KE DAPUR (FIREBASE CLOUD DATABASE - UNPAID WITH TIMESTAMP)
         // ------------------------------------------------------------
         async function sendOrderToKitchen() {
             if (cart.length === 0) {
@@ -957,16 +787,14 @@
             const sendBtn = document.getElementById('sendToKitchenBtn');
             const originalContent = sendBtn.innerHTML;
             
-            // Set Loading state on CTA
             sendBtn.disabled = true;
             sendBtn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Menghantar Pesanan...`;
 
-            // Prep order payload
+            // Prepare order specs
             const receiptId = "WI-" + Math.floor(1000 + Math.random() * 9000);
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             
-            // Mengubah status kepada 'Unpaid' mengikut permintaan anda agar diselaraskan terus dengan halaman admin.html
-            // Tarikh dan masa di-capture dalam format ISO universal (createdAt) yang membolehkan manipulasi zon masa tempatan di halaman admin
+            // Standardizing properties structure to sync neatly with cashier board
             const orderPayload = {
                 receiptId: receiptId,
                 tableNumber: tableNumberVal,
@@ -976,11 +804,10 @@
                     quantity: item.quantity
                 })),
                 totalPrice: totalAmount,
-                createdAt: new Date().toISOString(), // Direkodkan dengan masa & tarikh tepat server/browser
-                paymentStatus: "Unpaid" // Ditukar terus kepada 'Unpaid' bermula di menu pelanggan
+                createdAt: new Date().toISOString(), // Captured timestamp in standard ISO format
+                paymentStatus: "Unpaid" // Strictly set as Unpaid to match admin filter criteria
             };
 
-            // Firestore Operations Guards & Flow (RULE 1, RULE 3 & Exponential Backoff)
             if (db) {
                 const maxRetries = 5;
                 let attempt = 0;
@@ -989,18 +816,16 @@
 
                 while (attempt < maxRetries && !success) {
                     try {
-                        // RULE 1: STRICT PATHWAY REQUIRED -> /artifacts/{appId}/public/data/{collectionName}
+                        // Firebase standard strict artifacts path (RULE 1 COMPLIANT)
                         const ordersCollectionRef = db.collection('artifacts').doc(appId).collection('public').doc('data').collection('orders');
                         
-                        // Add unique document to Cloud Firestore
                         await ordersCollectionRef.doc(receiptId).set(orderPayload);
                         success = true;
                     } catch (error) {
                         attempt++;
                         if (attempt >= maxRetries) {
-                            console.error("Firestore Write Failed after max retries:", error);
+                            console.error("Firestore Write Failed after maximum retries:", error);
                         } else {
-                            // Exponential Wait
                             await new Promise(resolve => setTimeout(resolve, delay));
                             delay *= 2;
                         }
@@ -1014,33 +839,28 @@
                     return;
                 }
             } else {
-                // Fallback to LocalStorage inside preview environment if Firebase is not authenticated
-                const localOrders = JSON.parse(localStorage.getItem('war_ibu_local_orders') || '[]');
-                localOrders.push(orderPayload);
-                localStorage.setItem('war_ibu_local_orders', JSON.stringify(localOrders));
-                console.log("No active Firebase connection. Stored fallback locally:", orderPayload);
+                alertCustom("Gagal berhubung dengan pangkalan data cloud. Sila periksa sambungan internet.");
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = originalContent;
+                return;
             }
 
-            // Reset Loading state on Button
             sendBtn.disabled = false;
             sendBtn.innerHTML = originalContent;
 
-            // Trigger Success UI Presentation
+            // Trigger success overlay presentation
             triggerOrderSuccess(receiptId);
         }
 
         // ------------------------------------------------------------
-        // 7. ORDER SUCCESS PRESENTATION
+        // PAPARAN NOTIFIKASI BERJAYA
         // ------------------------------------------------------------
         function triggerOrderSuccess(receiptId) {
-            // Close Cart drawer
             toggleCart();
 
-            // Populate Success Dialog Info
             document.getElementById('successTableNum').innerText = tableNumberVal;
             document.getElementById('successReceiptId').innerText = receiptId;
 
-            // Render Summary List
             const summaryList = document.getElementById('successSummaryList');
             summaryList.innerHTML = '';
             
@@ -1054,7 +874,6 @@
                 summaryList.appendChild(li);
             });
 
-            // Append total price
             const totalLi = document.createElement('div');
             totalLi.className = "flex justify-between items-center pt-2 font-bold text-emerald-800 text-sm";
             const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -1064,10 +883,9 @@
             `;
             summaryList.appendChild(totalLi);
 
-            // Open Success Screen
             document.getElementById('successOverlay').classList.remove('hidden');
 
-            // Reset Client Cart Object for next potential edits/orders
+            // Reset client cart
             cart = [];
             updateCartUI();
         }
@@ -1076,7 +894,6 @@
             document.getElementById('successOverlay').classList.add('hidden');
         }
 
-        // Custom Helper Modal Box (No browser alert)
         function alertCustom(message) {
             const alertDiv = document.createElement('div');
             alertDiv.className = "fixed top-5 left-1/2 transform -translate-x-1/2 z-50 max-w-sm w-11/12 bg-red-950/95 border-2 border-[#c5a850]/50 p-4 rounded-2xl text-center text-white shadow-2xl transition-all duration-300";
@@ -1087,7 +904,6 @@
             `;
             document.body.appendChild(alertDiv);
             
-            // Auto remove after 5s
             setTimeout(() => {
                 if (alertDiv && alertDiv.parentElement) alertDiv.remove();
             }, 5000);
