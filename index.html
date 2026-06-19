@@ -210,7 +210,6 @@
                 </div>
             </header>
 
-            <!-- Marketing Hook Hero Banner -->
             <div class="bg-[#1a2e40] text-white py-6 px-4 text-center relative overflow-hidden shadow-inner border-b border-[#c5a850]/30">
                 <div class="absolute inset-0 opacity-10 batik-bg"></div>
                 <div class="relative z-10 max-w-2xl mx-auto">
@@ -441,6 +440,38 @@
         });
 
         // ------------------------------------------------------------
+        // CLEAN IMAGE URL HELPER - RESOLVES STORAGE PATHS DIRECTLY
+        // ------------------------------------------------------------
+        function getCleanImageUrl(imagePath) {
+            if (!imagePath) {
+                return 'https://placehold.co/600x450/eaeaea/999999?text=Sajian+Tradisi';
+            }
+            
+            // Mengendalikan keadaan di mana pangkalan data menyimpan URL penuh Supabase
+            if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+                let cleanUrl = imagePath;
+                // Jika terdapat rujukan rest api dalam string, kita selaraskan dengan format storan awam public
+                if (cleanUrl.includes('/rest/v1/')) {
+                    cleanUrl = cleanUrl.replace('/rest/v1/', '/storage/v1/');
+                }
+                if (cleanUrl.includes('/storage/v1/object/sign/')) {
+                    cleanUrl = cleanUrl.replace('/storage/v1/object/sign/', '/storage/v1/object/public/');
+                }
+                return cleanUrl;
+            }
+            
+            // Mengendalikan keadaan jika pangkalan data hanya menyimpan nama fail atau laluan relatif
+            let cleanPath = imagePath;
+            if (cleanPath.startsWith('menu/')) {
+                cleanPath = cleanPath.substring(5); // singkirkan rujukan folder "menu/" di awal
+            }
+            cleanPath = cleanPath.replace(/^\/+/, ''); // bersihkan slashes di hadapan
+            
+            // Membina URL storan awam secara langsung berdasarkan bucket "menu"
+            return `${cloudDbUrl}/storage/v1/object/public/menu/${cleanPath}`;
+        }
+
+        // ------------------------------------------------------------
         // FETCH DYNAMIC MENUS FROM CLOUD DATABASE (NO FALLBACK MODE)
         // ------------------------------------------------------------
         async function fetchCloudMenus() {
@@ -460,43 +491,15 @@
                 if (error) throw error;
 
                 if (data && data.length > 0) {
-                    // Map cloud database items into standard local objects
+                    // Map cloud database items into standard local objects with bulletproof clean URLs
                     dynamicMenus = data.map(item => {
-                        let imageUrl = item.image || '';
-                        
-                        // DEFENSIVE FIX: Memastikan imej dimuat naik daripada bucket storan dikesan dengan tepat
-                        if (imageUrl) {
-                            // Bersihkan URL sekiranya terdapat sebarang ralat penggandaan laluan dalam database
-                            imageUrl = imageUrl.replace('/rest/v1/storage/v1/', '/storage/v1/');
-                            
-                            // Sekiranya laluan disimpan sebagai nama fail sahaja atau laluan separa (seperti "menu/fail.png")
-                            if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-                                let cleanPath = imageUrl;
-                                // Buang rujukan prefix bucket "menu/" sekiranya ia telah wujud dalam string path
-                                if (cleanPath.startsWith('menu/')) {
-                                    cleanPath = cleanPath.substring(5);
-                                }
-                                cleanPath = cleanPath.replace(/^\/+/, '');
-                                // Bina laluan terus menggunakan URL storan awam Supabase
-                                imageUrl = `${cloudDbUrl}/storage/v1/object/public/menu/${cleanPath}`;
-                            } else if (imageUrl.includes('/storage/v1/object/sign/')) {
-                                // Sekiranya ia menggunakan URL berasingan bertandatangan yang mungkin tamat tempoh, kita tukar kepada laluan awam public
-                                imageUrl = imageUrl.replace('/storage/v1/object/sign/', '/storage/v1/object/public/');
-                            }
-                        }
-                        
-                        // Set placeholder berkualiti tinggi jika tiada gambar langsung
-                        if (!imageUrl) {
-                            imageUrl = 'https://placehold.co/600x450/eaeaea/999999?text=Tiada+Gambar';
-                        }
-
                         return {
                             id: item.id.toString(),
                             name: item.name,
                             category: item.category || 'makanan',
                             price: parseFloat(item.price),
                             description: item.description || '',
-                            image: imageUrl,
+                            image: getCleanImageUrl(item.image),
                             badge: item.badge || '',
                             badgeColor: item.badge_color || ''
                         };
@@ -879,7 +882,7 @@
             
             cart.forEach(item => {
                 const li = document.createElement('div');
-                li.className = "flex justify-between items-center py-1 border-b border-gray-100 last:border-0";
+                li.className = "flex justify-between items-center py-1 border-b border-gray-100 last:border-0 last:pb-0";
                 li.innerHTML = `
                     <span class="truncate pr-4"><span class="font-bold text-navy">${item.quantity}x</span> ${item.name}</span>
                     <span class="font-semibold text-gray-700 whitespace-nowrap">RM ${(item.price * item.quantity).toFixed(2)}</span>
