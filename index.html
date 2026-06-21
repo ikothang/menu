@@ -18,7 +18,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    <!-- Cloud Database SDK Client (Separated to protect project credentials) -->
+    <!-- Cloud Database SDK Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -300,10 +300,30 @@
 
                 <!-- Drawer Footer (Order Summary and Send Order Action) -->
                 <div class="p-4 bg-gray-50 border-t border-gray-200 space-y-3">
+                    
+                    <!-- PROMO CODE INPUT BLOCK -->
+                    <div class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm space-y-2">
+                        <label for="promoCodeInput" class="block text-[10px] font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1">
+                            <i class="fa-solid fa-ticket text-gold text-xs"></i> <span>Kod Promo / Kupon</span>
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" id="promoCodeInput" placeholder="Contoh: IBU10" class="flex-grow px-3 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#c5a850] uppercase font-mono font-bold text-navy">
+                            <button onclick="applyPromoCode()" class="px-4 py-2 bg-navy hover:bg-[#c5a850] text-white hover:text-navy text-xs font-bold rounded-xl transition-colors">Guna</button>
+                        </div>
+                        <div id="promoMessage" class="hidden text-[10px] font-semibold"></div>
+                    </div>
+
                     <div class="flex justify-between items-center text-sm font-semibold text-gray-700">
                         <span>Jumlah Sajian</span>
                         <span id="summaryCount">0 Item</span>
                     </div>
+
+                    <!-- Promo Code Discount Row -->
+                    <div id="summaryDiscountRow" class="hidden flex justify-between items-center text-sm text-red-600 font-bold">
+                        <span id="summaryDiscountLabel">Diskaun</span>
+                        <span id="summaryDiscountAmount">-RM 0.00</span>
+                    </div>
+
                     <div class="flex justify-between items-center">
                         <span class="text-base font-bold text-gray-800">Jumlah Kasar</span>
                         <span id="summaryTotal" class="text-2xl font-serif-elegant font-bold text-emerald-700">RM 0.00</span>
@@ -374,6 +394,8 @@
         let cart = [];
         let currentCategory = 'all';
         let tableNumberVal = '';
+        let globalSettings = { coupons: [] }; // Memegang senarai kupon yang disegerakkan dari portal admin
+        let appliedCoupon = null; // Kupon yang sedang digunakan oleh pelanggan
 
         // Firebase Credentials
         const firebaseConfig = {
@@ -412,11 +434,14 @@
                 // Sign in anonymously for Firebase Firestore Writes
                 await firebase.auth().signInAnonymously();
 
+                // Listen to live settings including active coupons
+                listenToSettings();
+
                 // Initialize Cloud Database Client
                 cloudDbClient = supabase.createClient(cloudDbUrl, cloudDbAnonKey);
                 console.log("Cloud Database Client initialized successfully.");
 
-                // Load menu dynamically from cloud database (No fallback as requested)
+                // Load menu dynamically from cloud database
                 await fetchCloudMenus();
 
             } catch (err) {
@@ -425,6 +450,23 @@
                 renderMenuGrid();
             }
         });
+
+        // ------------------------------------------------------------
+        // LISTEN TO SETTINGS LIVE (COUPONS SYNCHRONIZATION)
+        // ------------------------------------------------------------
+        function listenToSettings() {
+            if (!db) return;
+            db.collection('artifacts').doc(appId).collection('public').doc('data').collection('settings').doc('config')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        globalSettings = doc.data();
+                        if (!globalSettings.coupons) globalSettings.coupons = [];
+                        console.log("Live restaurant settings synchronized:", globalSettings);
+                    }
+                }, (err) => {
+                    console.error("Failed to sync shop settings in customer view:", err);
+                });
+        }
 
         // ------------------------------------------------------------
         // CLEAN IMAGE URL HELPER - RESOLVES STORAGE PATHS DIRECTLY
@@ -677,7 +719,7 @@
         }
 
         // ------------------------------------------------------------
-        // SISTEM TROLI (CART DRAWER)
+        // SISTEM TROLI (CART DRAWER & PROMO CALCULATOR)
         // ------------------------------------------------------------
         function toggleCart() {
             const drawer = document.getElementById('cartDrawer');
@@ -745,6 +787,10 @@
             const cartContent = document.getElementById('cartContent');
             const summaryCount = document.getElementById('summaryCount');
             const summaryTotal = document.getElementById('summaryTotal');
+            
+            const discountRow = document.getElementById('summaryDiscountRow');
+            const discountLabel = document.getElementById('summaryDiscountLabel');
+            const discountAmountEl = document.getElementById('summaryDiscountAmount');
 
             updateCartBadgesOnly();
 
@@ -758,6 +804,8 @@
                 `;
                 summaryCount.innerText = "0 Item";
                 summaryTotal.innerText = "RM 0.00";
+                discountRow.classList.add('hidden');
+                appliedCoupon = null;
                 return;
             }
 
@@ -794,7 +842,73 @@
             });
 
             summaryCount.innerText = `${totalQuantity} Item`;
-            summaryTotal.innerText = `RM ${totalAmount.toFixed(2)}`;
+
+            // Kira diskaun jika kupon berjaya digunakan
+            let calculatedDiscount = 0;
+            if (appliedCoupon && totalAmount > 0) {
+                if (appliedCoupon.type === 'percentage') {
+                    calculatedDiscount = totalAmount * (appliedCoupon.value / 100);
+                } else if (appliedCoupon.type === 'fixed') {
+                    calculatedDiscount = Math.min(appliedCoupon.value, totalAmount);
+                }
+
+                discountLabel.innerText = `Diskaun (${appliedCoupon.code})`;
+                discountAmountEl.innerText = `-RM ${calculatedDiscount.toFixed(2)}`;
+                discountRow.classList.remove('hidden');
+            } else {
+                discountRow.classList.add('hidden');
+                calculatedDiscount = 0;
+            }
+
+            const grandTotal = totalAmount - calculatedDiscount;
+            summaryTotal.innerText = `RM ${grandTotal.toFixed(2)}`;
+        }
+
+        // ------------------------------------------------------------
+        // FUNGSI GUNA KOD PROMO (APPLY PROMO CODE)
+        // ------------------------------------------------------------
+        function applyPromoCode() {
+            const promoInput = document.getElementById('promoCodeInput');
+            const code = promoInput.value.trim().toUpperCase();
+
+            if (!code) {
+                showPromoStatusMessage("Sila masukkan kod kupon terlebih dahulu.", "text-rose-600");
+                return;
+            }
+
+            if (cart.length === 0) {
+                showPromoStatusMessage("Troli kosong! Sila masukkan hidangan dahulu.", "text-rose-600");
+                return;
+            }
+
+            const couponsList = globalSettings.coupons || [];
+            const matchedCoupon = couponsList.find(c => c.code === code);
+
+            if (!matchedCoupon) {
+                showPromoStatusMessage(`Kod kupon "${code}" tidak sah atau tidak wujud.`, "text-rose-600");
+                appliedCoupon = null;
+                updateCartUI();
+                return;
+            }
+
+            if (!matchedCoupon.isActive) {
+                showPromoStatusMessage(`Kod kupon "${code}" telah dinyahaktifkan.`, "text-rose-600");
+                appliedCoupon = null;
+                updateCartUI();
+                return;
+            }
+
+            // Berjaya menggunakan kupon
+            appliedCoupon = matchedCoupon;
+            showPromoStatusMessage(`Kupon "${code}" berjaya diterapkan!`, "text-emerald-600");
+            updateCartUI();
+        }
+
+        function showPromoStatusMessage(text, className) {
+            const promoMsg = document.getElementById('promoMessage');
+            promoMsg.innerText = text;
+            promoMsg.className = `text-[10px] font-semibold mt-1 ${className}`;
+            promoMsg.classList.remove('hidden');
         }
 
         // ------------------------------------------------------------
@@ -833,10 +947,15 @@
                     price: item.price,
                     quantity: item.quantity
                 })),
-                totalPrice: totalAmount,
+                totalPrice: totalAmount, // totalPrice mewakili subtotal kasar sebelum tolak promo
                 createdAt: new Date().toISOString(), // Captured timestamp in standard ISO format
                 paymentStatus: "Unpaid" // Strictly set as Unpaid to match admin filter criteria
             };
+
+            // Sertakan kod kupon sekiranya berjaya digunakan oleh pelanggan
+            if (appliedCoupon) {
+                orderPayload.couponCode = appliedCoupon.code;
+            }
 
             if (db) {
                 const maxRetries = 5;
@@ -910,19 +1029,48 @@
                 summaryList.appendChild(li);
             });
 
+            const subtotalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Tunjukkan potongan diskaun dalam ringkasan modal kejayaan
+            let discountValue = 0;
+            if (appliedCoupon) {
+                if (appliedCoupon.type === 'percentage') {
+                    discountValue = subtotalAmount * (appliedCoupon.value / 100);
+                } else if (appliedCoupon.type === 'fixed') {
+                    discountValue = Math.min(appliedCoupon.value, subtotalAmount);
+                }
+
+                const discountLi = document.createElement('div');
+                discountLi.className = "flex justify-between items-center py-1 text-red-600 font-semibold border-b border-gray-100";
+                discountLi.innerHTML = `
+                    <span>Diskaun (${appliedCoupon.code})</span>
+                    <span>-RM ${discountValue.toFixed(2)}</span>
+                `;
+                summaryList.appendChild(discountLi);
+            }
+
+            const finalTotalValue = subtotalAmount - discountValue;
+
             const totalLi = document.createElement('div');
             totalLi.className = "flex justify-between items-center pt-2 font-bold text-emerald-800 text-sm";
-            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             totalLi.innerHTML = `
                 <span>Jumlah Kasar</span>
-                <span>RM ${totalAmount.toFixed(2)}</span>
+                <span>RM ${finalTotalValue.toFixed(2)}</span>
             `;
             summaryList.appendChild(totalLi);
 
             document.getElementById('successOverlay').classList.remove('hidden');
 
-            // Reset client cart
+            // Reset client cart & promo inputs
             cart = [];
+            appliedCoupon = null;
+            
+            const promoInput = document.getElementById('promoCodeInput');
+            if (promoInput) promoInput.value = '';
+            
+            const promoMsg = document.getElementById('promoMessage');
+            if (promoMsg) promoMsg.classList.add('hidden');
+
             updateCartUI();
         }
 
